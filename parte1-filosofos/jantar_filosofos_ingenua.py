@@ -4,11 +4,10 @@ import time
 
 
 N = 5
-TEMPO_TIMEOUT = 1.5
 
 
 def registrar(filosofo, mensagem):
-    print(f"[Filosofo {filosofo}] {mensagem}", flush=True)
+    print(f"[Filósofo {filosofo}] {mensagem}", flush=True)
 
 
 def pensar(filosofo):
@@ -32,20 +31,11 @@ def filosofo_ingenuo(indice, garfos, barreira_inicio):
     garfos[garfo_esquerda].acquire()
     registrar(indice, f"pegou garfo esquerdo ({garfo_esquerda})")
 
-    # Esse sleep ajuda a mostrar o problema na pratica.
+    # Esse sleep ajuda a mostrar o problema na prática.
     time.sleep(0.3)
 
     registrar(indice, f"tentando pegar garfo direito ({garfo_direita})")
-    pegou_direita = garfos[garfo_direita].acquire(timeout=TEMPO_TIMEOUT)
-
-    if not pegou_direita:
-        registrar(
-            indice,
-            "nao conseguiu pegar o garfo direito (deadlock)",
-        )
-        garfos[garfo_esquerda].release()
-        registrar(indice, "liberou garfo esquerdo")
-        return
+    garfos[garfo_direita].acquire()
 
     try:
         registrar(indice, f"pegou garfo direito ({garfo_direita})")
@@ -61,7 +51,7 @@ def criar_garfos():
 
 
 def executar_versao_ingenua():
-    print("\n=== Versao ingenua: risco de deadlock ===\n", flush=True)
+    print("\n=== Versão ingênua: risco de deadlock ===\n", flush=True)
     garfos = criar_garfos()
     barreira_inicio = threading.Barrier(N)
     threads = []
@@ -75,11 +65,17 @@ def executar_versao_ingenua():
         threads.append(thread)
         thread.start()
 
+    print(
+        "\nSe todos ficarem tentando pegar o garfo direito, ocorreu deadlock. "
+        "Use Ctrl+C para encerrar a versão ingênua.\n",
+        flush=True,
+    )
+
     for thread in threads:
         thread.join()
 
     print(
-        "\nFim da versao ingenua. Quando todos seguram um garfo e esperam "
+        "\nFim da versão ingênua. Quando todos seguram um garfo e esperam "
         "o outro, o deadlock pode acontecer.\n",
         flush=True,
     )
