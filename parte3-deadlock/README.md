@@ -70,7 +70,7 @@ Iniciando simulação CORRIGIDA (Hierarquia de Recursos)...
 
 Programa finalizado com sucesso (sem deadlocks)!
 
-Como executar
+Como executar:
 
 Entrar na pasta:
 cd parte3-deadlock
